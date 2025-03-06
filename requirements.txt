@@ -15,7 +15,7 @@ idna==3.10
 jax==0.5.1
 jaxlib==0.5.1
 kiwisolver==1.4.8
-matplotlib==3.10.1
+matplotlib== 3.10.1
 mediapipe==0.10.21
 ml_dtypes==0.5.1
 numpy==1.26.4
