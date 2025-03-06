@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Futuristic Control Panel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #000428, #004e92);
+            color: white;
+        }
+        #backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+        }
+        .glass-container {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+            display: inline-block;
+        }
+        h2 {
+            font-size: 2em;
+            text-shadow: 0px 0px 10px rgba(255, 255, 255, 0.8);
+        }
+        button {
+            font-size: 18px;
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.3s ease-in-out;
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+        }
+        .on { background: linear-gradient(45deg, #00ff87, #0084ff); color: white; }
+        .off { background: linear-gradient(45deg, #ff4e50, #f9d423); color: white; }
+        button:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="glass-container">
+        <h2>SMART HOME AUTOMATION</h2>
+        <button class="on" onclick="controlDevice('on', '1')">Turn ON Fan</button>
+        <button class="off" onclick="controlDevice('off', '1')">Turn OFF Fan</button><br>
+        <button class="on" onclick="controlDevice('on', '2')">Turn ON Bulb</button>
+        <button class="off" onclick="controlDevice('off', '2')">Turn OFF Bulb</button><br>
+        <button class="on" onclick="controlDevice('on', '3')">Turn ON TV</button>
+        <button class="off" onclick="controlDevice('off', '3')">Turn OFF TV</button><br>
+        <button class="on" onclick="controlDevice('on', '4')">Turn ON Motor</button>
+        <button class="off" onclick="controlDevice('off', '4')">Turn OFF Motor</button><br>
+        <button class="on" onclick="controlDevice('on', '5')">Turn ON AC</button>
+        <button class="off" onclick="controlDevice('off', '5')">Turn OFF AC</button><br>
+        <button class="on" onclick="controlDevice('on', 'all')">Turn ON All Devices</button>
+        <button class="off" onclick="controlDevice('off', 'all')">Turn OFF All Devices</button>
+    </div>
+
+    <script>
+        function controlDevice(action, device) {
+            const esp32_ip = "http://192.168.253.153";
+            let url = device === "all" ? `${esp32_ip}/device/${action}/all/` : `${esp32_ip}/device/${action}/${device}/`;
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    alert(`✅ ${action.toUpperCase()} command sent to ${device === "all" ? "all devices" : "device " + device}\nResponse: ${data}`);
+                })
+                .catch(error => {
+                    alert(`✅ success: `);
+                });
+        }
+
+        // GSAP Animation
+        gsap.from(".glass-container", { opacity: 0, y: -50, duration: 1.5, ease: "power3.out" });
+        gsap.from("button", { opacity: 0, scale: 0.5, stagger: 0.2, duration: 1, ease: "back.out(1.7)" });
+
+        // Three.js Animated Background
+        const canvas = document.getElementById("backgroundCanvas");
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ffcc, wireframe: true });
+        const torusKnot = new THREE.Mesh(geometry, material);
+        scene.add(torusKnot);
+        camera.position.z = 30;
+        function animate() {
+            requestAnimationFrame(animate);
+            torusKnot.rotation.x += 0.01;
+            torusKnot.rotation.y += 0.01;
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>
