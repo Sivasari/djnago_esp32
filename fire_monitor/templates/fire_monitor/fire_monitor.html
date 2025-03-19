@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fire Monitoring</title>
+    <script src="{% static 'fire_monitor/fire_monitor.js' %}"></script>
+    <style>
+        #fire-notification {
+            display: none;
+            background: red;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔥 Fire Monitoring System</h1>
+    <h2 id="fire-status">Checking...</h2>
+    <div id="fire-notification"></div>
+</body>
+</html>
